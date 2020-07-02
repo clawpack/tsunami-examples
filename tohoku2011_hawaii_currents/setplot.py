@@ -54,62 +54,11 @@ def setplot(plotdata):
 
     plotdata.kml_publish = "http://math.boisestate.edu/~calhoun/visclaw/GoogleEarth/kmz"
 
-    #-----------------------------------------
-    # Figure for pcolor plot
-    #-----------------------------------------
-    plotfigure = plotdata.new_plotfigure(name='Bathymetry', figno=0)
-    plotfigure.show = True   # Don't show this file in the html version
-
-    # Set up for axes in this figure:
-    plotaxes = plotfigure.new_plotaxes('pcolor')
-    plotaxes.title = 'Surface'
-    plotaxes.scaled = True
-
-    plotaxes.afteraxes = fixup
-    plotaxes.xlimits = [132.0, 210.0]
-    plotaxes.ylimits = [9.0, 53.0]
-
-    # Water
-    plotitem = plotaxes.new_plotitem(plot_type='2d_pcolor')
-    #plotitem.plot_var = geoplot.surface
-    plotitem.show = True
-    plotitem.plot_var = geoplot.surface_or_depth
-    plotitem.pcolor_cmap = geoplot.tsunami_colormap
-    plotitem.pcolor_cmin = -0.2
-    plotitem.pcolor_cmax = 0.2
-    plotitem.add_colorbar = True
-    plotitem.amr_celledges_show = [0,0,0]
-    plotitem.patchedges_show = 1
-
-    # Land
-    plotitem = plotaxes.new_plotitem(plot_type='2d_pcolor')
-    plotitem.show = True
-    plotitem.plot_var = geoplot.land
-    plotitem.pcolor_cmap = geoplot.land_colors
-    plotitem.pcolor_cmin = 0.0
-    plotitem.pcolor_cmax = 100.0
-    plotitem.add_colorbar = False
-    plotitem.amr_celledges_show = [1,1,0]
-    plotitem.patchedges_show = 1
-    plotaxes.xlimits = [202., 206.]
-    plotaxes.ylimits = [19., 21.]
-
-    # add contour lines of bathy if desired:
-    plotitem = plotaxes.new_plotitem(plot_type='2d_contour')
-    plotitem.show = True
-    plotitem.plot_var = geoplot.topo
-    plotitem.contour_levels = linspace(-2000,0,5)
-    plotitem.amr_contour_colors = ['w']  # color on each level
-    plotitem.kwargs = {'linestyles':'solid','linewidths':1}
-    plotitem.amr_contour_show = [1,0,0]
-    plotitem.celledges_show = 0
-    plotitem.patchedges_show = 0
-
 
     #-----------------------------------------
     # Figure for imshow plot
     #-----------------------------------------
-    plotfigure = plotdata.new_plotfigure(name='imshow', figno=1)
+    plotfigure = plotdata.new_plotfigure(name='Domain', figno=1)
 
     # Set up for axes in this figure:
     plotaxes = plotfigure.new_plotaxes('imshow')
@@ -123,11 +72,11 @@ def setplot(plotdata):
     # plotitem.plot_var = geoplot.surface
     plotitem.plot_var = geoplot.surface_or_depth
     plotitem.imshow_cmap = geoplot.tsunami_colormap
-    plotitem.imshow_cmin = -0.2
-    plotitem.imshow_cmax = 0.2
+    plotitem.imshow_cmin = -1.
+    plotitem.imshow_cmax = 1.
     plotitem.add_colorbar = True
     plotitem.amr_celledges_show = [0,0,0]
-    plotitem.patchedges_show = 1
+    plotitem.patchedges_show = [1,1,1,0,0]  # only coarse levels
 
     # Land
     plotitem = plotaxes.new_plotitem(plot_type='2d_imshow')
@@ -137,56 +86,9 @@ def setplot(plotdata):
     plotitem.imshow_cmax = 100.0
     plotitem.add_colorbar = False
     plotitem.amr_celledges_show = [0,0,0]
-    plotitem.patchedges_show = 1
+    plotitem.patchedges_show = [1,1,1,0,0]  # only coarse levels
     plotaxes.xlimits = 'auto'
     plotaxes.ylimits = 'auto'
-
-    # add contour lines of bathy if desired:
-    plotitem = plotaxes.new_plotitem(plot_type='2d_contour')
-    plotitem.show = True
-    plotitem.plot_var = geoplot.topo
-    plotitem.contour_levels = linspace(-2000,0,5)
-    plotitem.amr_contour_colors = ['y']  # color on each level
-    plotitem.kwargs = {'linestyles':'solid','linewidths':2}
-    plotitem.amr_contour_show = [1,0,0]
-    plotitem.celledges_show = 0
-    plotitem.patchedges_show = 0
-
-
-    #-----------------------------------------
-    # Figure for zoom plot
-    #-----------------------------------------
-    plotfigure = plotdata.new_plotfigure(name='zoom', figno=2)
-
-    # Set up for axes in this figure:
-    plotaxes = plotfigure.new_plotaxes('imshow')
-    plotaxes.title = 'Surface'
-    plotaxes.scaled = True
-
-    plotaxes.afteraxes = fixup
-
-    # Water
-    plotitem = plotaxes.new_plotitem(plot_type='2d_imshow')
-    # plotitem.plot_var = geoplot.surface
-    plotitem.plot_var = geoplot.surface_or_depth
-    plotitem.imshow_cmap = geoplot.tsunami_colormap
-    plotitem.imshow_cmin = -0.2
-    plotitem.imshow_cmax = 0.2
-    plotitem.add_colorbar = True
-    plotitem.amr_celledges_show = [0,0,0]
-    plotitem.patchedges_show = 1
-
-    # Land
-    plotitem = plotaxes.new_plotitem(plot_type='2d_imshow')
-    plotitem.plot_var = geoplot.land
-    plotitem.imshow_cmap = geoplot.land_colors
-    plotitem.imshow_cmin = 0.0
-    plotitem.imshow_cmax = 100.0
-    plotitem.add_colorbar = False
-    plotitem.amr_celledges_show = [0,0,0]
-    plotitem.patchedges_show = 1
-    plotaxes.xlimits = [203.2, 203.8]
-    plotaxes.ylimits = [20.6, 21.3]
 
     # add contour lines of bathy if desired:
     plotitem = plotaxes.new_plotitem(plot_type='2d_contour')
@@ -203,7 +105,54 @@ def setplot(plotdata):
     #-----------------------------------------
     # Figure for zoom plot
     #-----------------------------------------
-    plotfigure = plotdata.new_plotfigure(name='zoom3', figno=3)
+    plotfigure = plotdata.new_plotfigure(name='Maui', figno=2)
+
+    # Set up for axes in this figure:
+    plotaxes = plotfigure.new_plotaxes('imshow')
+    plotaxes.title = 'Surface'
+    plotaxes.scaled = True
+
+    plotaxes.afteraxes = fixup
+
+    # Water
+    plotitem = plotaxes.new_plotitem(plot_type='2d_imshow')
+    # plotitem.plot_var = geoplot.surface
+    plotitem.plot_var = geoplot.surface_or_depth
+    plotitem.imshow_cmap = geoplot.tsunami_colormap
+    plotitem.imshow_cmin = -1.
+    plotitem.imshow_cmax = 1.
+    plotitem.add_colorbar = True
+    plotitem.amr_celledges_show = [0,0,0]
+    plotitem.patchedges_show = 0
+
+    # Land
+    plotitem = plotaxes.new_plotitem(plot_type='2d_imshow')
+    plotitem.plot_var = geoplot.land
+    plotitem.imshow_cmap = geoplot.land_colors
+    plotitem.imshow_cmin = 0.0
+    plotitem.imshow_cmax = 100.0
+    plotitem.add_colorbar = False
+    plotitem.amr_celledges_show = [0,0,0]
+    plotitem.patchedges_show = 0
+    plotaxes.xlimits = [203.2, 204.1]
+    plotaxes.ylimits = [20.4, 21.3]
+
+    # add contour lines of bathy if desired:
+    plotitem = plotaxes.new_plotitem(plot_type='2d_contour')
+    plotitem.show = False
+    plotitem.plot_var = geoplot.topo
+    plotitem.contour_levels = linspace(-2000,0,5)
+    plotitem.amr_contour_colors = ['y']  # color on each level
+    plotitem.kwargs = {'linestyles':'solid','linewidths':2}
+    plotitem.amr_contour_show = [1,0,0]
+    plotitem.celledges_show = 0
+    plotitem.patchedges_show = 0
+
+
+    #-----------------------------------------
+    # Figure for zoom plot
+    #-----------------------------------------
+    plotfigure = plotdata.new_plotfigure(name='Kahului Harbor', figno=3)
 
     # Set up for axes in this figure:
     plotaxes = plotfigure.new_plotaxes('imshow')
@@ -221,7 +170,7 @@ def setplot(plotdata):
     plotitem.imshow_cmax = 0.2
     plotitem.add_colorbar = True
     plotitem.celledges_show = 0
-    plotitem.patchedges_show = 1
+    plotitem.patchedges_show = 0
 
     # Land
     plotitem = plotaxes.new_plotitem(plot_type='2d_imshow')
@@ -231,13 +180,13 @@ def setplot(plotdata):
     plotitem.imshow_cmax = 10.0
     plotitem.add_colorbar = False
     plotitem.celledges_show = 0
-    plotitem.patchedges_show = 1
-    plotaxes.xlimits = [203.45, 203.58]
-    plotaxes.ylimits = [20.85, 20.95]
+    plotitem.patchedges_show = 0
+    plotaxes.xlimits = [203.48, 203.57]
+    plotaxes.ylimits = [20.88, 20.94]
 
     # add contour lines of bathy if desired:
     plotitem = plotaxes.new_plotitem(plot_type='2d_contour')
-    #plotitem.show = False
+    plotitem.show = False
     plotitem.plot_var = geoplot.topo
     #plotitem.contour_levels = linspace(-2000,0,5)
     plotitem.contour_levels = linspace(0,8,9)
@@ -252,7 +201,7 @@ def setplot(plotdata):
     # Figure for KML files
     #--------------------------------------------------------------------
     plotfigure = plotdata.new_plotfigure(name='Sea Surface',figno=4)
-    plotfigure.show = True   # Don't show this file in the html version
+    plotfigure.show = plotdata.kml  # only make it if making kml files
 
     plotfigure.kml_use_for_initial_view= True
     plotfigure.use_for_kml = True
@@ -268,6 +217,7 @@ def setplot(plotdata):
     # LatLong box used for plotting
     plotfigure.kml_xlimits = [132.0, 210.0]
     plotfigure.kml_ylimits = [9.0, 53.0]
+    plotfigure.kml_use_for_initial_view
 
     cmin = -0.2
     cmax = 0.2
@@ -396,6 +346,30 @@ def setplot(plotdata):
     plotaxes.afteraxes = add_legend_vel
 
 
+    #-----------------------------------------
+    # Plots of timing (CPU and wall time):
+
+    def make_timing_plots(plotdata):
+        from clawpack.visclaw import plot_timing_stats
+        import os,sys
+        try:
+            timing_plotdir = plotdata.plotdir + '/_timing_figures'
+            os.system('mkdir -p %s' % timing_plotdir)
+            # adjust units for plots based on problem:
+            units = {'comptime':'seconds', 'simtime':'hours', 
+                     'cell':'millions'}
+            plot_timing_stats.make_plots(outdir=plotdata.outdir, 
+                                          make_pngs=True,
+                                          plotdir=timing_plotdir, 
+                                          units=units)
+        except:
+            print('*** Error making timing plots')
+
+    otherfigure = plotdata.new_otherfigure(name='timing plots',
+                    fname='_timing_figures/timing.html')
+    otherfigure.makefig = make_timing_plots
+
+
 
     #-----------------------------------------
 
@@ -413,6 +387,7 @@ def setplot(plotdata):
     plotdata.latex_figsperline = 2           # layout of plots
     plotdata.latex_framesperline = 1         # layout of plots
     plotdata.latex_makepdf = False           # also run pdflatex?
+    plotdata.parallel = True
 
     plotdata.kml = False
     #plotfigure.kml_url = 'http://math.boisestate.edu/~calhoun/visclaw/GoogleEarth/tohoku'

@@ -1,39 +1,55 @@
 
-.. _geoclaw_examples_tsunami_tohoku:
+.. _tsunami-examples_tohoku2011_hawaii_currents:
 
-Tsunami arising offshore of Japan, 5:46AM March 11, 2010 (UTC)
+Tohoku tsunami and comparison with gauge data in Hawaii
 ==============================================================
+
+This example is set up to replicate some of the results from 
+`this paper <http://dx.doi.org/10.1007/s00024-014-0980-y>`__::
+
+    M. Arcos and R. J. LeVeque, Validating Velocities in the GeoClaw Tsunami 
+    Model using Observations Near Hawaii from the 2011 Tohoku Tsunami, 
+    Pure and Applied Geophysics, 2015.  DOI 10.1007/s00024-014-0980-y
+
+For more details see the Jupyter notebook `compare_results.ipynb`.
 
 This example uses the dtopo file `fujii.txydz`, which is downloaded from the 
 script `maketopo.py`.  This can be run via::
 
-    $ make topo
+    make topo
 
-which also downloads a topo file for the ocean bathymetry.
+at the command line, which also downloads a topo file for the ocean bathymetry.
 This bathymetry originally came from the NOAA National Geophysical Data
 Center (NGDC), now NCEI (see `Sources of tsunami data
 <http://www.clawpack.org/tsunamidata.html>`__).
 
-**Creating kml files to view on Google Earth**
+To run the code and produce plots::
 
-Users have the option of creating  KML files which can loaded into Google Earth.  To create 
-these files, make sure that the appropriate figure number is set in `setplots.py` and that 
-`plotdata.kml = True`.  
+    make .plots
 
-To view the results in Google Earth, use the command
+This produces plots of the surface and velocity at two gauges 1123 and 5680.
+These gauges are at locations corresponding to the ADCP gauge HAI1123 (an
+acoustic Doppler current profiler that was in place to record currents) and
+the tide gauge in the Kahului Harbor.
 
-    $ open _plots/Tohoku_2011.kmz 
+To better view the gauge results and also plot comparisons with observations
+at these gauges, run the Jupyter notebook `compare_results.ipynb`.
 
-Assuming you have Google Earth installed, this should open the file in the Google Earth browser. 
+**A rendered version of the Jupyter notebook** for this example (with output
+and plots) can be viewed from the `Clawpack gallery version of this file.
+<http://www.clawpack.org/gallery/_static/??/README.html>`__
 
-You can `unzip` the `kmz` file if you want to extract individual `kml`
-files.
+Note that `setrun.py` has::
 
-See `<http://www.clawpack.org/googleearth_plotting.html>`_ for
-documentation.
+    amrdata.amr_levels_max = 5
+
+so that the code runs quickly (about 15 minutes of CPU time on a MacBook Pro).
+Setting this to 6 gives another level refined by an additional factor 30
+around Kahului Harbor, which agrees with the resolution used in the
+original paper.  Running this way takes about 2 hours of CPU time.
 
 Version
 -------
 
-- Updated for v5.7.0 on 20 June 2020
+- Developed using v5.7.0 in July, 2020.
 

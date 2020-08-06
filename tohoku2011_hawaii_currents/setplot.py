@@ -43,17 +43,6 @@ def setplot(plotdata):
         #pylab.xticks(fontsize=15)
         #pylab.yticks(fontsize=15)
 
-    #-----------------------------------------
-    # Some global kml flags
-    #-----------------------------------------
-    plotdata.kml_index_fname = "Tohoku_2011"     # Name for .kmz and .kml files.
-    plotdata.kml_name = "Tohoku 2011"
-
-    plotdata.kml_starttime = [2011,3,11,5,46,0]  # [Y,M,D,H,M,S] (UTC)
-    plotdata.kml_tz_offset = -9     # offset to UTC
-
-    plotdata.kml_publish = "http://math.boisestate.edu/~calhoun/visclaw/GoogleEarth/kmz"
-
 
     #-----------------------------------------
     # Figure for imshow plot
@@ -72,11 +61,12 @@ def setplot(plotdata):
     # plotitem.plot_var = geoplot.surface
     plotitem.plot_var = geoplot.surface_or_depth
     plotitem.imshow_cmap = geoplot.tsunami_colormap
-    plotitem.imshow_cmin = -1.
-    plotitem.imshow_cmax = 1.
+    plotitem.imshow_cmin = -0.5
+    plotitem.imshow_cmax = 0.5
     plotitem.add_colorbar = True
     plotitem.amr_celledges_show = [0,0,0]
-    plotitem.patchedges_show = [1,1,1,0,0]  # only coarse levels
+    plotitem.patchedges_show = 0
+    #plotitem.amr_patchedges_show = [1,1,1,0,0]  # only coarse levels
 
     # Land
     plotitem = plotaxes.new_plotitem(plot_type='2d_imshow')
@@ -86,7 +76,8 @@ def setplot(plotdata):
     plotitem.imshow_cmax = 100.0
     plotitem.add_colorbar = False
     plotitem.amr_celledges_show = [0,0,0]
-    plotitem.patchedges_show = [1,1,1,0,0]  # only coarse levels
+    plotitem.patchedges_show = 0
+    #plotitem.amr_patchedges_show = [1,1,1,0,0]  # only coarse levels
     plotaxes.xlimits = 'auto'
     plotaxes.ylimits = 'auto'
 
@@ -195,48 +186,6 @@ def setplot(plotdata):
     plotitem.amr_contour_show = [0,0,0,0,0,1]
     plotitem.celledges_show = 0
     plotitem.patchedges_show = 0
-
-
-    #-------------------------------------------------------------------
-    # Figure for KML files
-    #--------------------------------------------------------------------
-    plotfigure = plotdata.new_plotfigure(name='Sea Surface',figno=4)
-    plotfigure.show = plotdata.kml  # only make it if making kml files
-
-    plotfigure.kml_use_for_initial_view= True
-    plotfigure.use_for_kml = True
-
-    # Resolution : numcells = [39, 22]; maxlevel = 4
-    # Refinement in setrun.py : [5, 6, 4]
-    rcl = 2    # rcl*figsize = numcells
-    plotfigure.kml_dpi = rcl*5*6*4
-    plotfigure.kml_figsize = [19.5,11]
-
-    plotfigure.kml_tile_images = False
-
-    # LatLong box used for plotting
-    plotfigure.kml_xlimits = [132.0, 210.0]
-    plotfigure.kml_ylimits = [9.0, 53.0]
-    plotfigure.kml_use_for_initial_view
-
-    cmin = -0.2
-    cmax = 0.2
-    cmap = geoplot.googleearth_transparent
-
-    # Set up for axes in this figure:
-    plotaxes = plotfigure.new_plotaxes('pcolor')
-    plotitem = plotaxes.new_plotitem(plot_type='2d_pcolor')
-    plotitem.plot_var = geoplot.surface_or_depth
-    plotitem.pcolor_cmap = cmap
-    plotitem.pcolor_cmin = cmin
-    plotitem.pcolor_cmax = cmax
-
-    def kml_colorbar(filename):
-        geoplot.kml_build_colorbar(filename,
-                                   cmap,
-                                   cmin,cmax)
-
-    plotfigure.kml_colorbar = kml_colorbar
 
 
     #-----------------------------------------
@@ -388,8 +337,5 @@ def setplot(plotdata):
     plotdata.latex_framesperline = 1         # layout of plots
     plotdata.latex_makepdf = False           # also run pdflatex?
     plotdata.parallel = True
-
-    plotdata.kml = False
-    #plotfigure.kml_url = 'http://math.boisestate.edu/~calhoun/visclaw/GoogleEarth/tohoku'
 
     return plotdata

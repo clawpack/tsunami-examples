@@ -441,11 +441,19 @@ def setgeo(rundata):
     # rundata.fixed_grid_data.fixedgrids = []
     # fixedgrids = rundata.fixed_grid_data.fixedgrids
 
-    # == fgmax.data values ==
-    # fgmax_files = rundata.fgmax_data.fgmax_grids
-    # for fixed grids append to this list names of any fgmax input files
-    # fgmax_files.append('fgmax1.txt')
-    # rundata.fgmax_data.num_fgmax_val = 2
+    # == fgmax_grids.data values ==
+    # NEW STYLE STARTING IN v5.7.0
+
+    # set num_fgmax_val = 1 to save only max depth,
+    #                     2 to also save max speed,
+    #                     5 to also save max hs,hss,hmin
+    rundata.fgmax_data.num_fgmax_val = 2  # Save depth and speed
+
+    fgmax_grids = rundata.fgmax_data.fgmax_grids  # empty list to start
+
+    # Now append to this list objects of class fgmax_tools.FGmaxGrid
+    # specifying any fgmax grids.
+
 
 
     return rundata

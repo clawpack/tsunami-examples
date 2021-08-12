@@ -1,10 +1,5 @@
 """
-Create topo and dtopo files needed for this example:
-    etopo10min120W60W60S0S.asc        download from GeoClaw topo repository
-    dtopo_usgs100227.tt3              create using Okada model 
-Prior to Clawpack 5.2.1, the fault parameters we specified in a .cfg file,
-but now they are explicit below.
-    
+Script for downloading gauge and topography data, and generating differential topography data
 Call functions with makeplots==True to create plots of topo, slip, and dtopo.
 """
 
@@ -19,7 +14,6 @@ try:
 except:
     raise Exception("*** Must first set CLAW enviornment variable")
 
-# Scratch directory for storing topo and dtopo files:
 scratch_dir = os.path.join(CLAW, 'geoclaw', 'scratch')
 
 def get_topo(makeplots=False):
@@ -27,11 +21,10 @@ def get_topo(makeplots=False):
     Retrieve the topo file from the GeoClaw repository.
     """
     from clawpack.geoclaw import topotools
-    topo_fname = 'gebco_2020_n0.0_s-60.0_w-120.0_e-60.0.asc'
-    #topo_fname = 'etopo10min120W60W60S0S.asc'
-    #url = 'http://depts.washington.edu/clawpack/geoclaw/topo/etopo/' + topo_fname
-    #clawpack.clawutil.data.get_remote_file(url, output_dir=scratch_dir, 
-    #        file_name=topo_fname, verbose=True)
+    # download 10 arc-minute topography data in region around Chile
+    topo_fname = 'etopo10min120W60W60S0S.asc'
+    url = 'http://depts.washington.edu/clawpack/geoclaw/topo/etopo/' + topo_fname
+    clawpack.clawutil.data.get_remote_file(url, output_dir=scratch_dir, file_name=topo_fname, verbose=True)
 
     if makeplots:
         from matplotlib import pyplot as plt
@@ -41,7 +34,7 @@ def get_topo(makeplots=False):
         plt.savefig(fname)
         print("Created ",fname)
 
-
+# generate side-by-side fault slip and seafloor deformation contour plots
 def plot_subfaults_dZ(t, fig, fault, dtopo, xlower, xupper, ylower, yupper, xylim, dz_max):
     fig.clf()
     ax1 = fig.add_subplot(121)
@@ -49,69 +42,31 @@ def plot_subfaults_dZ(t, fig, fault, dtopo, xlower, xupper, ylower, yupper, xyli
     fault.plot_subfaults(axes=ax1, slip_color=True,
                         slip_time=t, xylim=xylim)
     dtopo.plot_dZ_colors(axes=ax2, t=t, cmax_dZ=dz_max)
-    # ax1.plot(shoreline_xy[:,0],shoreline_xy[:,1],'g')
-    # ax2.plot(shoreline_xy[:,0],shoreline_xy[:,1],'g')
     ax2.set_xlim(xlower,xupper)
     ax2.set_ylim(ylower,yupper)
     return fig
 
-    
+# create dtopo file from finite fault data    
 def make_dtopo(makeplots=False):
-    """
-    Create dtopo data file for deformation of sea floor due to earthquake.
-    Uses the Okada model with fault parameters and mesh specified below.
-    """
     from clawpack.geoclaw import dtopotools
     from matplotlib import pyplot as plt
     import numpy
     from get_dtopo_csv import get_csv
 
+    # specify the URL for the USGS finite fault data file and properly format into a CSV file
     param_fname = 'basic_inversion.param'
     csv_fname = 'chile2015.csv'
     get_csv('https://earthquake.usgs.gov/product/finite-fault/us20003k7a/us/1539809967421/' + param_fname, param_fname, csv_fname)
 
     dtopo_fname = os.path.join(scratch_dir, "dtopo_usgs100227.tt3")
 
-    # Specify subfault parameters for this simple fault model consisting
-    # of a single subfault:
-
-
+    # manually specify the bounds for the fault model (leave unchanged)
     xlower = -73
     xupper = -70.5
     ylower = -33
     yupper = -29.5
     xylim = [xlower,xupper,ylower,yupper]
 
-    """ [IGNORE - MANUAL SUBFAULT ENTRY]
-        
-
-        # dtopo parameters:
-        points_per_degree = 60   # 1 minute resolution
-        mx = int((xupper - xlower)*points_per_degree + 1)
-        my = int((yupper - ylower)*points_per_degree + 1)
-        x = numpy.linspace(xlower,xupper,mx)
-        y = numpy.linspace(ylower,yupper,my)
-        print ("dZ arrays will have shape %s by %s" % (len(y),len(x)))
-
-        usgs_subfault = dtopotools.SubFault()
-        usgs_subfault.strike = 16.
-        usgs_subfault.length = 450.e3
-        usgs_subfault.width = 100.e3
-        usgs_subfault.depth = 35.e3
-        usgs_subfault.slip = 15.
-        usgs_subfault.rake = 104.
-        usgs_subfault.dip = 14.
-        usgs_subfault.longitude = -72.668
-        usgs_subfault.latitude = -35.826
-        usgs_subfault.coordinate_specification = "top center"
-
-        fault = dtopotools.Fault()
-        fault.subfaults = [usgs_subfault]
-
-        print("Mw = ",fault.Mw())
-    """
-
-    subfault_fname = 'chile2015.csv'
     input_units = {
         'depth' : 'km',
         'slip' : 'cm', 
@@ -119,12 +74,12 @@ def make_dtopo(makeplots=False):
         'width' : 'km',
         'mu' : 'Pa'
     }
+
     fault = dtopotools.CSVFault()
-    fault.read(subfault_fname,input_units=input_units, coordinate_specification='noaa sift')
+    fault.read(csv_fname,input_units=input_units, coordinate_specification='noaa sift')
     fault.rupture_type = 'dynamic'
 
     print ("%s subfaults read in " % len(fault.subfaults))
-
 
     if os.path.exists(dtopo_fname):
         print("*** Not regenerating dtopo file (already exists): %s" \
@@ -136,26 +91,27 @@ def make_dtopo(makeplots=False):
         my = int((yupper - ylower)*points_per_degree + 1)
         x = numpy.linspace(xlower, xupper, mx)
         y = numpy.linspace(ylower, yupper, my)
+        
+        # list of the times (in seconds) when the dtopo data is captured
+        # here, `times` consists of the interval [0,200] divided evenly into 20 markers (0 and 200 included)
+        # note: ensure that the maximum value in `times` exceeds the maximum rupture time of any subfault
         times = numpy.linspace(0,200,20)
-        # times = [1.]
 
+        # create and write dtopo file
         fault.create_dtopography(x,y,times)
         dtopo = fault.dtopo
         dtopo.write(dtopo_fname, dtopo_type=3)
-        dzmax =  abs(dtopo.dZ).max()
-        print('dzmax={}'.format(dzmax))
 
-        from clawpack.visclaw.JSAnimation import IPython_display
         import clawpack.visclaw.JSAnimation.JSAnimation_frametools as J
         plotdir = '_fault_slip_plots'
         J.make_plotdir(plotdir, clobber=True)
         fig = plt.figure(figsize=(12,5))
+        dzmax = abs(dtopo.dZ).max()
 
+        # generate fault slip and deformation plots
         for k,t in enumerate(times):
             plot_subfaults_dZ(t,fig, fault, dtopo, xlower, xupper, ylower, yupper, xylim, dzmax)
             J.save_frame(k, plotdir = plotdir, verbose=True)
-
-
 
     if makeplots:
         if fault.dtopo is None:
@@ -176,10 +132,12 @@ def make_dtopo(makeplots=False):
         plt.savefig(fname)
         print("Created ",fname)
 
-
+# grabs gauge data from NOAA and formats it
 def get_gauge():
+    # find more gauge numbers here: https://www.ngdc.noaa.gov/hazard/dart/2015chile.html
     gaugeinfo = []
-    gaugeinfo.append([32412, 0.03])
+    # gaugeinfo.append([gauge_no, offset]) where `offset` is the nonzero equilibrium in the data
+    gaugeinfo.append([32412, -0.03])
     gaugeinfo.append([32402, 0.00])
 
     for gaugeno, offset in gaugeinfo:

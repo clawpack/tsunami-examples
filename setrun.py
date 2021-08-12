@@ -1,9 +1,9 @@
 """
 Module to set up run time parameters for Clawpack.
+Left relatively unchanged from file in chile2010 example, outside of filenames and user parameters
 
 The values set in the function setrun are then written out to data files
 that will be read in by the Fortran code.
-
 """
 
 from __future__ import absolute_import
@@ -286,10 +286,10 @@ def setrun(claw_pkg='geoclaw'):
     amrdata.amr_levels_max = 8
 
     # List of refinement ratios at each level (length at least mxnest-1)
+    # note: for the topography data used in this example, model accuracy plateaus at level 7 or 8 
     amrdata.refinement_ratios_x = [2,4,2,4,2,4,2]
     amrdata.refinement_ratios_y = [2,4,2,4,2,4,2]
     amrdata.refinement_ratios_t = [2,4,2,4,2,4,2]
-
 
     # Specify type of each aux variable in amrdata.auxtype.
     # This must be a list of length maux, each element of which is one of:
@@ -346,6 +346,7 @@ def setrun(claw_pkg='geoclaw'):
     # ---------------
     rundata.gaugedata.gauges = []
     # for gauges append lines of the form  [gaugeno, x, y, t1, t2]
+    # note: make sure the gauge numbers here match with those in setplot.py and maketopo.py
     rundata.gaugedata.gauges.append([32412, -86.392, -17.975, 0., 1.e10])
     rundata.gaugedata.gauges.append([32402, -73.983, -26.743, 0., 1.e10])
     
@@ -394,8 +395,6 @@ def setgeo(rundata):
     # for topography, append lines of the form
     #    [topotype, fname]
     topo_path = os.path.join(scratch_dir, 'etopo10min120W60W60S0S.asc')
-    # topo_path = os.path.join(scratch_dir, 'gebco_2020_n0.0_s-60.0_w-120.0_e-60.0.asc')
-    # topo_path = os.path.join(scratch_dir, 'gebco_2020_n0.0_s-60.0_w-120.0_e-60.0.asc')
     
     topo_data.topofiles.append([2, topo_path])
 

@@ -10,14 +10,13 @@ function setplot is called to set the plot parameters.
 from __future__ import absolute_import
 from __future__ import print_function
 import numpy as np
-import matplotlib.pyplot as plt
 
-from clawpack.geoclaw import topotools
 from six.moves import range
 
 try:
     TG32412 = np.loadtxt('32412_notide.txt')
     TG32402 = np.loadtxt('32402_notide.txt')
+    # add a NumPy reader for each tide gauge downloaded in maketopo.py
 except:
     print("*** Could not load DART data file")
 
@@ -31,7 +30,6 @@ def setplot(plotdata=None):
     Output: a modified version of plotdata.
     
     """ 
-
 
     from clawpack.visclaw import colormaps, geoplot
     from numpy import linspace
@@ -146,6 +144,7 @@ def setplot(plotdata=None):
         t = current_data.t 
         gaugeno = current_data.gaugeno
 
+        # add conditional blocks of this form for each tide gauge, with the desired axis bounds
         if gaugeno == 32412:
             try:
                 plot(TG32412[:,0], TG32412[:,1], 'r')
@@ -211,4 +210,3 @@ def setplot(plotdata=None):
     plotdata.parallel = True                 # make multiple frame png's at once
 
     return plotdata
-

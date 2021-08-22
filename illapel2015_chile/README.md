@@ -16,7 +16,7 @@ In this example, we model the tsunami resulting from the earthquake. We validate
 
 In the example, [maketopo.py](maketopo.py) downloads the data directly from source into the scratch directory within GeoClaw. 
 
-```
+```python
 # maketopo.py, lines 26-27
 url = 'http://depts.washington.edu/clawpack/geoclaw/topo/etopo/' + topo_fname
 clawpack.clawutil.data.get_remote_file(url, output_dir=scratch_dir, file_name=topo_fname, verbose=True)
@@ -30,7 +30,7 @@ If you want to run a simulation with more refined topography, simply download th
 
 As with topography data, moving topography (dtopo) data is directly downloaded. 
 
-```
+```python
 # maketopo.py, lines 57-59
 param_fname = 'basic_inversion.param'
 csv_fname = 'chile2015.csv'

@@ -402,7 +402,7 @@ def setgeo(rundata):
     dtopo_data = rundata.dtopo_data
     # for moving topography, append lines of the form :   (<= 1 allowed for now!)
     #   [topotype, fname]
-    dtopo_path = os.path.join(scratch_dir, 'dtopo_usgs100227.tt3')
+    dtopo_path = os.path.join(scratch_dir, 'dtopo_usgs150916.tt3')
     dtopo_data.dtopofiles.append([3,dtopo_path])
     dtopo_data.dt_max_dtopo = 0.2
 

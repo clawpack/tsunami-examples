@@ -58,7 +58,7 @@ def make_dtopo(makeplots=False):
     csv_fname = 'chile2015.csv'
     get_csv('https://earthquake.usgs.gov/product/finite-fault/us20003k7a/us/1539809967421/' + param_fname, param_fname, csv_fname)
 
-    dtopo_fname = os.path.join(scratch_dir, "dtopo_usgs100227.tt3")
+    dtopo_fname = os.path.join(scratch_dir, "dtopo_usgs150916.tt3")
 
     # manually specify the bounds for the fault model (leave unchanged)
     xlower = -73

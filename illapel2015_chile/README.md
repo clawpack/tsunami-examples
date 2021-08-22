@@ -54,10 +54,25 @@ For additional testing, one can add more gauges for plotting. To do so, the down
 
 Topography and moving topography data for the 2015 Illapel earthquake were obtained from the internet and used by GeoClaw to run a simulation of the regional sea surface. Tide residuals were compared with observed NOAA data and demonstrated good local predictiveness but poor faraway predictiveness. Better topography data and further adaptive mesh refinement levels may yield improved results. More tide gauges may provide a better picture of the simulation's predictive scope.
 
-## Dependencies
+## Installation
 
+Make sure to have the following dependencies downloaded in order to run this example:
 - [Clawpack](https://www.clawpack.org/installing.html)
 - [pandas](https://pandas.pydata.org/)
+
+## Usage
+
+Make sure you have GNU Make installed, and run the following terminal commands inside of the `illapel2015_chile` directory:
+
+```
+make clobber
+make .data
+make xgeoclaw
+make .output
+make .plots
+```
+
+To optimize simulation speed, consider [setting OpenMP compiler flags for multiprocessing](https://www.clawpack.org/openmp.html).
 
 ---
 

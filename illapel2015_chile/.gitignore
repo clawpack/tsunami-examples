@@ -1,8 +1,0 @@
-*.data
-*.kml
-*.txt
-*.param
-*.csv
-_plots/
-_output/
-_fault_slip_plots/

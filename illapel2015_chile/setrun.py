@@ -283,13 +283,13 @@ def setrun(claw_pkg='geoclaw'):
     amrdata.max1d = 60
 
     # max number of refinement levels:
-    amrdata.amr_levels_max = 8
+    amrdata.amr_levels_max = 6
 
     # List of refinement ratios at each level (length at least mxnest-1)
     # note: for the topography data used in this example, model accuracy plateaus at level 7 or 8 
-    amrdata.refinement_ratios_x = [2,4,2,4,2,4,2]
-    amrdata.refinement_ratios_y = [2,4,2,4,2,4,2]
-    amrdata.refinement_ratios_t = [2,4,2,4,2,4,2]
+    amrdata.refinement_ratios_x = [2,5,5,5,5]
+    amrdata.refinement_ratios_y = [2,5,5,5,5]
+    amrdata.refinement_ratios_t = [2,5,5,5,5]
 
     # Specify type of each aux variable in amrdata.auxtype.
     # This must be a list of length maux, each element of which is one of:
@@ -350,6 +350,24 @@ def setrun(claw_pkg='geoclaw'):
     rundata.gaugedata.gauges.append([32412, -86.392, -17.975, 0., 1.e10])
     rundata.gaugedata.gauges.append([32402, -73.983, -26.743, 0., 1.e10])
     
+    # Manually-specified regions around gauges for higher refinement
+    # AMR level 5-6 reserved for within 1 latitude/longitude around gauges
+    # MAR level 1-4 for the remaining region
+    rundata.regiondata.regions.append([1, 4, 0., 1e9, clawdata.lower[0], clawdata.upper[0], clawdata.lower[1], clawdata.upper[1]])
+    from clawpack.amrclaw.data import FlagRegion
+    
+    for gaugeno,x1,x2,y1,y2 in [[32412,-86.392-1,-86.392+1,-17.975-1,-17.975+1],
+                                [32402,-73.983-1,-73.983+1,-26.743-1,-26.743+1]]:
+        flagregion = FlagRegion(num_dim=2)
+        flagregion.name = 'gauge{}'.format(gaugeno)
+        flagregion.minlevel = 5
+        flagregion.maxlevel = 6
+        flagregion.t1 = 0.
+        flagregion.t2 = 1e10
+        flagregion.spatial_region_type = 1
+        flagregion.spatial_region = [x1,x2,y1,y2]
+        rundata.flagregiondata.flagregions.append(flagregion)
+
 
     return rundata
     # end of function setrun

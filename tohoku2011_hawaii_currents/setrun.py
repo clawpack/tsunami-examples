@@ -415,31 +415,24 @@ def setgeo(rundata):
     refinement_data = rundata.refinement_data
     refinement_data.variable_dt_refinement_ratios = True
     refinement_data.wave_tolerance = 0.02
-    refinement_data.deep_depth = 200.0
-    refinement_data.max_level_deep = 4
 
     # == settopo.data values ==
     topofiles = rundata.topo_data.topofiles
-    topofiles.append([3, 1, 1, 0.0, 1e10, os.path.join(topodir,'etopo1min130E210E0N60N.asc')])
+    topofiles.append([3, os.path.join(topodir,'etopo1min130E210E0N60N.asc')])
     # hawaii_6s topofile not needed, results very similar either way
-    #topofiles.append([3, 1, 1, 0.0, 1e10, os.path.join(topodir,'hawaii_6s.txt')])
-    topofiles.append([3, 1, 1, 0., 1.e10, os.path.join(topodir,'kahului_1s.txt')])
+    #topofiles.append([3, os.path.join(topodir,'hawaii_6s.txt')])
+    topofiles.append([3, os.path.join(topodir,'kahului_1s.txt')])
 
 
     # == setdtopo.data values ==
-    # [dtype, minlevel, maxlevel, 'topo']
 
     # Region 1, above handles this region.  
-    rundata.dtopo_data.dtopofiles = [[1, 1, 1, os.path.join(topodir,'fujii.txydz')]]
+    rundata.dtopo_data.dtopofiles = [[1, os.path.join(topodir,'fujii.txydz')]]
 
     # == setqinit.data values ==
     rundata.qinit_data.qinit_type =  0
     rundata.qinit_data.qinitfiles = []
 
-    # == fixedgrids.data values ==
-    # fixedgrids = []
-    # rundata.fixed_grid_data.fixedgrids = []
-    # fixedgrids = rundata.fixed_grid_data.fixedgrids
 
     # == fgmax_grids.data values ==
     # NEW STYLE STARTING IN v5.7.0
